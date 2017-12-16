@@ -1,40 +1,28 @@
-local Component = {
-   components = {},
-}
-local Component_MT = {__index = Component}
+local Component = {}
+Component.__index = Component
 
-function Component.new(name, populate)
+function Component.new(populate)
    local component = setmetatable({
-      name     = name,
       populate = populate,
-
-      entities = {},
-   }, Component_MT)
-
-   Component.components[name] = component
+   }, Component)
 
    return component
 end
 
 function Component:initialize(e, ...)
-   local bag = self.entities[e.id] or {}
+   if self.populate then
+      local bag = {}
+      self.populate(bag, ...)
+      return bag
+   end
 
-   self.populate(bag, ...)
-   self.entities[e.id] = bag
-
-   return bag
+   return true
 end
 
+--[[
 function Component.populate(e, ...)
 end
-
-function Component:has(e)
-   return self.entities[e.id] and true
-end
-
-function Component:get(e)
-   return self.entities[e.id]
-end
+]]
 
 return setmetatable(Component, {
    __call = function(_, ...) return Component.new(...) end,

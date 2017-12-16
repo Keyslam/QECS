@@ -2,16 +2,18 @@ local Entity    = require("qecs.entity")
 local Component = require("qecs.component")
 local System    = require("qecs.system")
 
-local Position = Component("Position", function(e, x, y)
+local Position = Component(function(e, x, y)
    e.x = x
    e.y = y
 end)
 
-local Color = Component("Color", function(e, r, g, b)
+local Color = Component(function(e, r, g, b)
    e.r = r
    e.g = g
    e.b = b
 end)
+
+local Hello = Component()
 
 local Gravity = System({Position})
 function Gravity:update(dt)
@@ -39,6 +41,10 @@ function RenderRectangle:draw()
       end
 
       love.graphics.rectangle("fill", position.x, position.y, 20, 20)
+
+      if e:has(Hello) then
+         love.graphics.print("Hello!", position.x, position.y)
+      end
    end
 end
 
@@ -75,6 +81,7 @@ function love.update(dt)
 
       if love.math.random(0, 2) == 1 then
          e:add(Color, love.math.random(0, 255), love.math.random(0, 255), love.math.random(0, 255))
+         e:add(Hello)
       end
 
       Gravity:checkPool(e)

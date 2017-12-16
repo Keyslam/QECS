@@ -1,13 +1,13 @@
 local Component = require("qecs.component")
 
 local System = {}
-local System_MT = {__index = System}
+System.__index = System
 
 function System.new(filter)
    return setmetatable({
       entities = {},
       filter   = filter,
-   }, System_MT)
+   }, System)
 end
 
 function System:update(dt)
@@ -44,7 +44,7 @@ function System:removeFromPool(e)
       self.entities[key] = nil
    else
       local ne = self.entities[c]
-      
+
       self.entities[key] = ne
       self.entities[c]   = nil
       ne.keys[self]      = key
