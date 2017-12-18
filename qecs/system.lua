@@ -20,9 +20,7 @@ function System:checkPool(e)
    local allowed = true
 
    for i = 1, #self.filter do
-      local component = self.filter[i]
-
-      if not component:has(e) then
+      if not e:has(self.filter[i]) then
          allowed = false
          break
       end
@@ -52,5 +50,5 @@ function System:removeFromPool(e)
 end
 
 return setmetatable(System, {
-   __call = function(_, ...) return System.new(_, ...) end,
+   __call = function(_, ...) return System.new(...) end,
 })
