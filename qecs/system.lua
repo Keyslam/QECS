@@ -31,6 +31,8 @@ function System:checkPool(e)
 
       e.keys[self] = key
       self.entities[key] = e
+
+      self:entityAdded(e)
    end
 end
 
@@ -47,6 +49,14 @@ function System:removeFromPool(e)
       self.entities[c]   = nil
       ne.keys[self]      = key
    end
+
+   self:entityRemoved(e)
+end
+
+function System:entityAdded(e)
+end
+
+function System:entityRemoved(e)
 end
 
 return setmetatable(System, {
