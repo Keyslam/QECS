@@ -1,21 +1,19 @@
-local Entity    = require("qecs.entity")
-local Component = require("qecs.component")
-local System    = require("qecs.system")
+local Qecs = require("qecs")
 
-local Position = Component(function(e, x, y)
+local Position = Qecs.component(function(e, x, y)
    e.x = x
    e.y = y
 end)
 
-local Color = Component(function(e, r, g, b)
+local Color = Qecs.component(function(e, r, g, b)
    e.r = r
    e.g = g
    e.b = b
 end)
 
-local Hello = Component()
+local Hello = Qecs.component()
 
-local Gravity = System({Position})
+local Gravity = Qecs.system({Position})
 function Gravity:update(dt)
    for i = 1, #self.entities do
       local e = self.entities[i]
@@ -26,7 +24,7 @@ function Gravity:update(dt)
    end
 end
 
-local RenderRectangle = System({Position})
+local RenderRectangle = Qecs.system({Position})
 function RenderRectangle:draw()
    for i = 1, #self.entities do
       local e = self.entities[i]
@@ -48,7 +46,7 @@ function RenderRectangle:draw()
    end
 end
 
-local Remover = System({Position})
+local Remover = Qecs.system({Position})
 function Remover:update(dt)
    for i = #self.entities, 1, -1 do
       local e = self.entities[i]
@@ -76,7 +74,7 @@ function love.update(dt)
    if t <= 0 then
       t = love.math.random(2, 10) / 10
 
-      local e = Entity()
+      local e = Qecs.entity()
       e:add(Position, love.math.random(100, 300), 0)
 
       if love.math.random(0, 2) == 1 then
