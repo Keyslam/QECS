@@ -1,5 +1,0 @@
-local QECS = {}
-
-
-
-return QECS

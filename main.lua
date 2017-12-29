@@ -1,5 +1,8 @@
 local Qecs = require("qecs")
 
+local Instance = Qecs.instance()
+local Score    = 0
+
 local Position = Qecs.component(function(e, x, y)
    e.x = x
    e.y = y
@@ -11,86 +14,83 @@ local Color = Qecs.component(function(e, r, g, b)
    e.b = b
 end)
 
-local Hello = Qecs.component()
+local Clickable = Qecs.component()
+local Clicked   = Qecs.component()
 
-local Gravity = Qecs.system({Position})
-function Gravity:update(dt)
-   for i = 1, #self.entities do
-      local e = self.entities[i]
+local Spawner = Qecs.system()
+Spawner.timeLeft = 0
+Spawner.maxTime  = 1
 
-      local position = e:get(Position)
+function Spawner:update(dt)
+   Spawner.timeLeft = Spawner.timeLeft - dt
 
-      position.y = position.y + 100 * dt
+   if Spawner.timeLeft <= 0 then
+      Spawner.timeLeft = Spawner.timeLeft + Spawner.maxTime
+
+      local e = Qecs.entity()
+      e:add(Position, love.math.random(0, 320), love.math.random(0, 320))
+      e:add(Color, love.math.random(60, 255), love.math.random(60, 255), love.math.random(60, 255))
+      e:add(Clickable)
+
+      Instance:addEntity(e)
    end
 end
 
-local RenderRectangle = Qecs.system({Position})
-function RenderRectangle:draw()
-   for i = 1, #self.entities do
-      local e = self.entities[i]
+local RectangleRenderer = Qecs.system({Position, Color})
 
+function RectangleRenderer:draw()
+   for _, e in ipairs(self.pool) do
       local position = e:get(Position)
       local color    = e:get(Color)
 
-      if color then
-         love.graphics.setColor(color.r, color.g, color.b)
-      else
-         love.graphics.setColor(255, 255, 255)
-      end
-
+      love.graphics.setColor(color.r, color.g, color.b)
       love.graphics.rectangle("fill", position.x, position.y, 20, 20)
-
-      if e:has(Hello) then
-         love.graphics.print("Hello!", position.x, position.y)
-      end
    end
 end
 
-local Remover = Qecs.system({Position})
-function Remover:update(dt)
-   for i = #self.entities, 1, -1 do
-      local e = self.entities[i]
+local Remover = Qecs.system({Clicked})
 
+function Remover:update(dt)
+   for _, e in ipairs(self.pool) do
+      Instance:destroyEntity(e)
+      Score = Score + 10
+   end
+end
+
+local Clicker = Qecs.system({Clickable, Position})
+
+function Clicker:mousepressed(x, y)
+   for _, e in ipairs(self.pool) do
       local position = e:get(Position)
 
-      if position.y > 400 then
-         e:destroy()
+      if x > position.x and x < position.x + 20 and
+         y > position.y and y < position.y + 20 then
 
-         Gravity:removeFromPool(e)
-         RenderRectangle:removeFromPool(e)
-         Remover:removeFromPool(e)
+         e:add(Clicked)
       end
    end
 end
 
-local t = 0
+
+Instance:addSystem(Spawner)
+Instance:addSystem(RectangleRenderer)
+Instance:addSystem(Remover)
+Instance:addSystem(Clicker)
 
 function love.load()
 end
 
 function love.update(dt)
-   t = t - dt
-
-   if t <= 0 then
-      t = love.math.random(2, 10) / 10
-
-      local e = Qecs.entity()
-      e:add(Position, love.math.random(100, 300), 0)
-
-      if love.math.random(0, 2) == 1 then
-         e:add(Color, love.math.random(0, 255), love.math.random(0, 255), love.math.random(0, 255))
-         e:add(Hello)
-      end
-
-      Gravity:checkPool(e)
-      RenderRectangle:checkPool(e)
-      Remover:checkPool(e)
-   end
-
-   Gravity:update(dt)
-   Remover:update(dt)
+   Instance:update(dt)
 end
 
 function love.draw()
-   RenderRectangle:draw()
+   Instance:draw()
+
+   love.graphics.setColor(255, 255, 255)
+   love.graphics.print(Score, 10, 10)
+end
+
+function love.mousepressed(x, y)
+   Instance:callback("mousepressed", x, y)
 end
