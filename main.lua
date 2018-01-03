@@ -17,6 +17,12 @@ end)
 local Clickable = Qecs.component()
 local Clicked   = Qecs.component()
 
+local Block = Qecs.assemblage(function(e, x, y, r, g, b)
+   e:give(Position, x or 0, y or 0)
+   e:give(Color,    r or 0, g or 0, b or 0)
+   e:give(Clickable)
+end)
+
 local Spawner = Qecs.system()
 Spawner.timeLeft = 0
 Spawner.maxTime  = 1
@@ -27,12 +33,12 @@ function Spawner:update(dt)
    if Spawner.timeLeft <= 0 then
       Spawner.timeLeft = Spawner.timeLeft + Spawner.maxTime
 
-      local e = Qecs.entity()
-      e:add(Position, love.math.random(0, 320), love.math.random(0, 320))
-      e:add(Color, love.math.random(60, 255), love.math.random(60, 255), love.math.random(60, 255))
-      e:add(Clickable)
+      local x, y    = love.math.random(0, 320), love.math.random(0, 320)
+      local r, g, b = love.math.random(60, 255), love.math.random(60, 255), love.math.random(60, 255)
 
-      Instance:addEntity(e)
+      local block = Block(x, y, r, g, b)
+
+      Instance:addEntity(block)
    end
 end
 
@@ -66,11 +72,11 @@ function Clicker:mousepressed(x, y)
       if x > position.x and x < position.x + 20 and
          y > position.y and y < position.y + 20 then
 
-         e:add(Clicked)
+         e:give(Clicked)
+         e:check()
       end
    end
 end
-
 
 Instance:addSystem(Spawner)
 Instance:addSystem(RectangleRenderer)

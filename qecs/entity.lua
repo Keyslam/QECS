@@ -18,15 +18,15 @@ function Entity.new()
    return e
 end
 
-function Entity:add(component, ...)
+function Entity:give(component, ...)
    local bag = component:initialize(self, ...)
    self.components[component] = bag
 
-   if self.instance then
-      self.instance:checkEntity(self)
-   end
-
    return bag
+end
+
+function Entity:check()
+   self.instance:checkEntity(self)
 end
 
 function Entity:destroy()

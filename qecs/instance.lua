@@ -15,9 +15,9 @@ function Instance.new()
 end
 
 function Instance:addEntity(e)
+   e.instance = self
    self.entities:add(e)
    self:checkEntity(e)
-   e.instance = self
 end
 
 function Instance:checkEntity(e)
