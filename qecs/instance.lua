@@ -1,6 +1,7 @@
 local PATH = (...):gsub('%.[^%.]+$', '')
 
-local Pool = require(PATH..".pool")
+local Pool  = require(PATH..".pool")
+local Event = require(PATH..".event")
 
 local Instance = {}
 Instance.__index = Instance
@@ -40,20 +41,21 @@ function Instance:addSystem(system)
    self.systems[#self.systems + 1] = system
 end
 
-function Instance:callback(name, ...)
+function Instance:callback(event)
+   --print(event.__name)
    for _, system in ipairs(self.systems) do
-      if system[name] then
-         system[name](system, ...)
+      if system[event.__name] then
+         system[event.__name](system, event)
       end
    end
 end
 
 function Instance:update(dt)
-   self:callback("update", dt)
+   self:callback(Event.update(dt))
 end
 
 function Instance:draw()
-   self:callback("draw")
+   self:callback(Event.draw())
 end
 
 return setmetatable(Instance, {

@@ -27,8 +27,8 @@ local Spawner = Qecs.system()
 Spawner.timeLeft = 0
 Spawner.maxTime  = 1
 
-function Spawner:update(dt)
-   Spawner.timeLeft = Spawner.timeLeft - dt
+function Spawner:update(ev)
+   Spawner.timeLeft = Spawner.timeLeft - ev.dt
 
    if Spawner.timeLeft <= 0 then
       Spawner.timeLeft = Spawner.timeLeft + Spawner.maxTime
@@ -65,12 +65,12 @@ end
 
 local Clicker = Qecs.system({Clickable, Position})
 
-function Clicker:mousepressed(x, y)
+function Clicker:mousepressed(ev)
    for _, e in ipairs(self.pool) do
       local position = e:get(Position)
 
-      if x > position.x and x < position.x + 20 and
-         y > position.y and y < position.y + 20 then
+      if ev.x > position.x and ev.x < position.x + 20 and
+         ev.y > position.y and ev.y < position.y + 20 then
 
          e:give(Clicked)
          e:check()
@@ -98,5 +98,5 @@ function love.draw()
 end
 
 function love.mousepressed(x, y)
-   Instance:callback("mousepressed", x, y)
+   Instance:callback(Qecs.event.mousepressed(x, y))
 end
