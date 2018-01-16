@@ -7,5 +7,6 @@ Qecs.component  = require(PATH..".component")
 Qecs.system     = require(PATH..".system")
 Qecs.instance   = require(PATH..".instance")
 Qecs.assemblage = require(PATH..".assemblage")
+Qecs.event      = require(PATH..".event")
 
 return Qecs
