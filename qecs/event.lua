@@ -52,7 +52,7 @@ Event.joystickremoved  = Event.new("joystickremoved", "joystick")
 Event.joystickpressed  = Event.new("joystick", "button")
 Event.joystickreleased = Event.new("joystickreleased", "joystick", "button")
 Event.joystickaxis     = Event.new("joystickaxis", "joystick", "axis", "value")
-Event.joystickhat      = Event.new("joystick", "hat", "direction")
+Event.joystickhat      = Event.new("joystickhat", "joystick", "hat", "direction")
 
 Event.gamepadpressed  = Event.new("gamepadpressed", "joystick", "button")
 Event.gamepadreleased = Event.new("gamepadreleased", "joystick", "button")

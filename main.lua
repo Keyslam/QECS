@@ -78,10 +78,10 @@ function Clicker:mousepressed(ev)
    end
 end
 
-Instance:addSystem(Spawner)
-Instance:addSystem(RectangleRenderer)
-Instance:addSystem(Remover)
-Instance:addSystem(Clicker)
+Instance:addSystem(Spawner, "update")
+Instance:addSystem(RectangleRenderer, "draw")
+Instance:addSystem(Remover, "update")
+Instance:addSystem(Clicker, "mousepressed")
 
 function love.load()
 end
@@ -98,5 +98,5 @@ function love.draw()
 end
 
 function love.mousepressed(x, y)
-   Instance:callback(Qecs.event.mousepressed(x, y))
+   Instance:emit(Qecs.event.mousepressed(x, y))
 end

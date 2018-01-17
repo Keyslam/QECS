@@ -21,7 +21,7 @@ function EventManager:emit(event)
    if listeners then
       for i = 1, #listeners do
          local listener = listeners[i]
-         listener(event)
+         listener[event.__name](listener, event)
       end
    end
 end
@@ -34,7 +34,7 @@ function EventManager:register(name, listener)
       self.listeners[name] = listeners
    end
 
-   listeners.count = count + 1
+   listeners.count = listeners.count + 1
    listeners[listeners.count] = listener
 end
 
