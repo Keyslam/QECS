@@ -13,6 +13,8 @@ end
 function EventManager:push(event)
    queue.count = queue.count + 1
    queue[queue.count] = event
+
+   return self
 end
 
 function EventManager:emit(event)
@@ -21,9 +23,12 @@ function EventManager:emit(event)
    if listeners then
       for i = 1, #listeners do
          local listener = listeners[i]
+
          listener[event.__name](listener, event)
       end
    end
+
+   return self
 end
 
 function EventManager:register(name, listener)
@@ -36,6 +41,8 @@ function EventManager:register(name, listener)
 
    listeners.count = listeners.count + 1
    listeners[listeners.count] = listener
+
+   return self
 end
 
 function EventManager:deregister(name, listener)
@@ -51,15 +58,21 @@ function EventManager:deregister(name, listener)
          end
       end
    end
+
+   return self
 end
 
 function EventManager:process()
+   local queue = self.queue
+
    for i = 1, queue.count do
       self:emit(queue[i])
       queue[i] = nil
    end
 
    queue.count = 0
+
+   return self
 end
 
 return setmetatable(EventManager, {

@@ -1,29 +1,29 @@
-local Qecs = require("qecs")
+local Fluid = require("Fluid")
 
-local Instance = Qecs.instance()
+local Instance = Fluid.instance()
 local Score    = 0
 
-local Position = Qecs.component(function(e, x, y)
+local Position = Fluid.component(function(e, x, y)
    e.x = x
    e.y = y
 end)
 
-local Color = Qecs.component(function(e, r, g, b)
+local Color = Fluid.component(function(e, r, g, b)
    e.r = r
    e.g = g
    e.b = b
 end)
 
-local Clickable = Qecs.component()
-local Clicked   = Qecs.component()
+local Clickable = Fluid.component()
+local Clicked   = Fluid.component()
 
-local Block = Qecs.assemblage(function(e, x, y, r, g, b)
+local Block = Fluid.assemblage(function(e, x, y, r, g, b)
    e:give(Position, x or 0, y or 0)
    e:give(Color,    r or 0, g or 0, b or 0)
    e:give(Clickable)
 end)
 
-local Spawner = Qecs.system()
+local Spawner = Fluid.system()
 Spawner.timeLeft = 0
 Spawner.maxTime  = 1
 
@@ -42,7 +42,7 @@ function Spawner:update(ev)
    end
 end
 
-local RectangleRenderer = Qecs.system({Position, Color})
+local RectangleRenderer = Fluid.system({Position, Color})
 
 function RectangleRenderer:draw()
    for _, e in ipairs(self.pool) do
@@ -54,7 +54,7 @@ function RectangleRenderer:draw()
    end
 end
 
-local Remover = Qecs.system({Clicked})
+local Remover = Fluid.system({Clicked})
 
 function Remover:update(dt)
    for _, e in ipairs(self.pool) do
@@ -63,7 +63,7 @@ function Remover:update(dt)
    end
 end
 
-local Clicker = Qecs.system({Clickable, Position})
+local Clicker = Fluid.system({Clickable, Position})
 
 function Clicker:mousepressed(ev)
    for _, e in ipairs(self.pool) do
@@ -98,5 +98,5 @@ function love.draw()
 end
 
 function love.mousepressed(x, y)
-   Instance:emit(Qecs.event.mousepressed(x, y))
+   Instance:emit(Fluid.event.mousepressed(x, y))
 end

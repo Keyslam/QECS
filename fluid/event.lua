@@ -28,6 +28,7 @@ function Event:populate(...)
    return bag
 end
 
+Event.load   = Event.new("load", "arg")
 Event.update = Event.new("update", "dt")
 Event.draw   = Event.new("draw")
 Event.quit   = Event.new("quit")
